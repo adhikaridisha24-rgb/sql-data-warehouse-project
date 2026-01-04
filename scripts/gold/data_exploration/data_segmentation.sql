@@ -46,7 +46,11 @@ WITH customer_spending AS (
         SUM(f.sales_amount) AS total_spending,
         MIN(order_date) AS first_order,
         MAX(order_date) AS last_order,
-        DATEDIFF(month, MIN(order_date), MAX(order_date)) AS lifespan
+        TIMESTAMPDIFF(
+        MONTH,
+        MIN(order_date),
+        MAX(order_date)
+    ) AS lifespan
     FROM gold.fact_sales f
     LEFT JOIN gold.dim_customers c
         ON f.customer_key = c.customer_key
