@@ -65,6 +65,16 @@ prd_end_dt
 )
 select 
 prd_id,
+cat_id,
+prd_key,
+prd_nm,
+prd_cost,
+prd_line,
+prd_start_dt,
+LEAD(prd_start_dt) OVER (PARTITION BY prd_key ORDER BY prd_start_dt) - INTERVAL 1 DAY AS prd_end_dt
+from (
+select 
+prd_id,
 replace(substring(prd_key,1,5),'-','_') as cat_id,
 substring(prd_key,7,length(prd_key)) as prd_key,
 prd_nm,
@@ -76,8 +86,9 @@ case when upper(trim(prd_line))='M' then 'Mountain'
      else 'n/a'
 end as prd_line,
 prd_start_dt,
-LEAD(prd_start_dt) OVER (PARTITION BY prd_key ORDER BY prd_start_dt) - INTERVAL 1 DAY AS prd_end_dt
-from bronze.crm_prod_info;
+prd_end_dt
+from bronze.crm_prod_info
+)t
 
 
 -- Inserting data into silver.crm_sales_details
