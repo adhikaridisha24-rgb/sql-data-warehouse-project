@@ -24,10 +24,7 @@ Highlights:
 -- =============================================================================
 -- Create Report: gold.report_customers
 -- =============================================================================
-IF OBJECT_ID('gold.report_customers', 'V') IS NOT NULL
-    DROP VIEW gold.report_customers;
-GO
-
+DROP VIEW IF EXISTS gold.report_customers;
 CREATE VIEW gold.report_customers AS
 
 WITH base_query AS(
@@ -43,11 +40,12 @@ f.quantity,
 c.customer_key,
 c.customer_number,
 CONCAT(c.first_name, ' ', c.last_name) AS customer_name,
-DATEDIFF(year, c.birthdate, GETDATE()) age
+TIMESTAMPDIFF(year, c.birthdate, CURDATE()) age
 FROM gold.fact_sales f
 LEFT JOIN gold.dim_customers c
 ON c.customer_key = f.customer_key
 WHERE order_date IS NOT NULL)
+
 
 , customer_aggregation AS (
 /*---------------------------------------------------------------------------
@@ -63,7 +61,7 @@ SELECT
 	SUM(quantity) AS total_quantity,
 	COUNT(DISTINCT product_key) AS total_products,
 	MAX(order_date) AS last_order_date,
-	DATEDIFF(month, MIN(order_date), MAX(order_date)) AS lifespan
+	TIMESTAMPDIFF(month, MIN(order_date), MAX(order_date)) AS lifespan
 FROM base_query
 GROUP BY 
 	customer_key,
@@ -89,13 +87,13 @@ CASE
     ELSE 'New'
 END AS customer_segment,
 last_order_date,
-DATEDIFF(month, last_order_date, GETDATE()) AS recency,
+TIMESTAMPDIFF(month, last_order_date, CURDATE()) AS recency,
 total_orders,
 total_sales,
 total_quantity,
 total_products
 lifespan,
--- Compuate average order value (AVO)
+-- Compute average order value (AVO)
 CASE WHEN total_sales = 0 THEN 0
 	 ELSE total_sales / total_orders
 END AS avg_order_value,
@@ -104,3 +102,5 @@ CASE WHEN lifespan = 0 THEN total_sales
      ELSE total_sales / lifespan
 END AS avg_monthly_spend
 FROM customer_aggregation
+
+ 
