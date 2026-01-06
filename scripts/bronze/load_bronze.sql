@@ -71,9 +71,4 @@ SELECT
     TIMESTAMPDIFF(second,
         @start_time,
         @end_time) as total_time_taken;
--- end$$
 
--- DELIMITER ;
--- to insert local file in mysql workbench
--- SHOW VARIABLES LIKE 'local_infile';
--- SET GLOBAL local_infile = 1;
