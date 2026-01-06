@@ -1,4 +1,11 @@
--- DELIMITER $$
+/*
+Script Purpose:
+    This stored procedure loads data into the 'bronze' schema from external CSV files. 
+    It performs the following actions:
+    - Truncates the bronze tables before loading data.
+    - And loads data from csv Files to bronze tables.
+===============================================================================
+*/
 
 SELECT 'Loading CRM Tables...' AS message;
 SELECT 'Truncating Table: bronze.crm_cust_info' AS message;
