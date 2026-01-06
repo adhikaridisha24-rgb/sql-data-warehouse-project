@@ -1,4 +1,7 @@
 /*
+===============================================================================
+Load Script: Load Bronze Tables
+===============================================================================
 Script Purpose:
     This stored procedure loads data into the 'bronze' schema from external CSV files. 
     It performs the following actions:
